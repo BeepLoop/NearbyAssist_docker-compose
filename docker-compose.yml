@@ -8,13 +8,14 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     expose:
       - "3306"
     ports:
       - "3307:3306"
     volumes:
-      - "./nearbyassist/internal/db/migrations/20231231015242_init.up.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "../NearbyAssist/internal/db/migrations/20231231015242_init.up.sql:/docker-entrypoint-initdb.d/init.sql"
 
   osrm:
     image: ghcr.io/project-osrm/osrm-backend
@@ -23,11 +24,11 @@ services:
     expose:
       - "5000"
     volumes:
-      - "${PWD}/osrm-backend:/data"
+      - "../osrm-backend/:/data"
 
   server:
     build:
-      context: ./nearbyassist
+      context: ../NearbyAssist/
       dockerfile: ./Dockerfile
     container_name: nearbyassist-server
     restart: on-failure
@@ -41,5 +42,5 @@ services:
     environment:
       DB_HOST: db
     env_file:
-      - ./nearbyassist/.env
+      - ../NearbyAssist/.env
 
