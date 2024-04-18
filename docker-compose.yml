@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+
+  db:
+    image: mysql:latest
+    container_name: nearbyassist-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    expose:
+      - "3306"
+    ports:
+      - "3307:3306"
+    volumes:
+      - "./nearbyassist/internal/db/migrations/20231231015242_init.up.sql:/docker-entrypoint-initdb.d/init.sql"
+
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend
+    container_name: nearbyassist-osrm
+    command: osrm-routed --algorithm mld /data/philippines-latest.osrm
+    expose:
+      - "5000"
+    volumes:
+      - "${PWD}/osrm-backend:/data"
+
+  server:
+    build:
+      context: ./nearbyassist
+      dockerfile: ./Dockerfile
+    container_name: nearbyassist-server
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_started
+      osrm: 
+        condition: service_started
+    environment:
+      DB_HOST: db
+    env_file:
+      - ./nearbyassist/.env
+
