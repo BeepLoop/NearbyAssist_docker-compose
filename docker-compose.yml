@@ -16,6 +16,7 @@ services:
       - "3307:3306"
     volumes:
       - "../NearbyAssist/internal/db/migrations/20231231015242_init.up.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./mysql:/var/lib/mysql"
 
   osrm:
     image: ghcr.io/project-osrm/osrm-backend
