@@ -17,6 +17,8 @@ services:
     volumes:
       - "../NearbyAssist/internal/db/migrations/20231231015242_init.up.sql:/docker-entrypoint-initdb.d/init.sql"
       - "./mysql:/var/lib/mysql"
+    networks:
+        - nearbyassist
 
   osrm:
     image: ghcr.io/project-osrm/osrm-backend
@@ -26,12 +28,14 @@ services:
       - "5000"
     volumes:
       - "../osrm-backend/:/data"
+    networks:
+        - nearbyassist
 
   server:
     build:
       context: ../NearbyAssist/
       dockerfile: ./Dockerfile
-    container_name: nearbyassist-server
+    container_name: server
     restart: on-failure
     ports:
       - "3000:3000"
@@ -44,4 +48,21 @@ services:
       DB_HOST: db
     env_file:
       - ../NearbyAssist/.env
+    networks:
+        - nearbyassist
 
+  web:
+    build:
+      context: ../NearbyAssist_web/
+      dockerfile: ./Dockerfile
+    container_name: website
+    restart: on-failure
+    ports:
+      - "3001:80"
+    depends_on:
+      - server
+    networks:
+        - nearbyassist
+
+networks:
+  nearbyassist:
