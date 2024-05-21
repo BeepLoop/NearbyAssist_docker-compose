@@ -4,7 +4,7 @@ services:
 
   db:
     image: mysql:latest
-    container_name: nearbyassist-db
+    container_name: db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -22,7 +22,7 @@ services:
 
   osrm:
     image: ghcr.io/project-osrm/osrm-backend
-    container_name: nearbyassist-osrm
+    container_name: osrm
     command: osrm-routed --algorithm mld /data/philippines-latest.osrm
     expose:
       - "5000"
@@ -61,6 +61,8 @@ services:
       - "3001:80"
     depends_on:
       - server
+    env_file:
+      - ../NearbyAssist_web/.env
     networks:
         - nearbyassist
 
