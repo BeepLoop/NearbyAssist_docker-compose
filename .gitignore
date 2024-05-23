@@ -1,5 +1,6 @@
 .env
 
 mysql/
+logs/
 NearbyAssist/
 osrm-backend/

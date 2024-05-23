@@ -78,8 +78,12 @@ services:
       - backend
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log/nginx/
     networks:
       - nearbyassist
 
 networks:
   nearbyassist:
+
+volumes:
+  logs:
