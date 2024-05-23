@@ -31,11 +31,11 @@ services:
     networks:
         - nearbyassist
 
-  server:
+  backend:
     build:
       context: ../NearbyAssist/
       dockerfile: ./Dockerfile
-    container_name: server
+    container_name: backend
     restart: on-failure
     ports:
       - "3000:3000"
@@ -55,16 +55,31 @@ services:
     build:
       context: ../NearbyAssist_web/
       dockerfile: ./Dockerfile
-    container_name: website
+    container_name: web
     restart: on-failure
     ports:
       - "3001:80"
     depends_on:
-      - server
+      - backend 
     env_file:
       - ../NearbyAssist_web/.env
     networks:
         - nearbyassist
+
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web 
+      - backend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - nearbyassist
 
 networks:
   nearbyassist:
