@@ -2,5 +2,6 @@
 
 mysql/
 logs/
+server-upload/
 NearbyAssist/
 osrm-backend/
